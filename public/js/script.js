@@ -49,5 +49,5 @@ function loadLocation() {
 
 function why() {
 	$("#reason").show();
-	$("#reason").html(reason);
+	$("#reason").html(reason + ' Powered by <a href="http://forecast.io">Forecast.io</a>.');
 }
