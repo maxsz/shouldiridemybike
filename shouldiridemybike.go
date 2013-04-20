@@ -8,8 +8,8 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 const API_KEY = ""
@@ -21,13 +21,13 @@ const DECISION_MAX_PRECIP = 0.20
 const DECISION_MAX_WINDSPEED = 15.5
 
 type Page struct {
-	Title     string
+	Title string
 }
 
 type Decision struct {
 	Result bool
 	Reason string
-	Error *string
+	Error  *string
 }
 
 type Location struct {
@@ -59,7 +59,7 @@ type DataPoint struct {
 type DataBlock struct {
 	Summary string
 	Icon    string
-	Data []DataPoint
+	Data    []DataPoint
 }
 
 type Forecast struct {
@@ -74,7 +74,7 @@ type Forecast struct {
 }
 
 // Make a decision based on the given forecast
-func decide(forecast *Forecast) (*Decision) {
+func decide(forecast *Forecast) *Decision {
 	result := true
 	var reason string
 
@@ -82,28 +82,28 @@ func decide(forecast *Forecast) (*Decision) {
 	if elem.Temperature < DECISION_MIN_TEMP || elem.Temperature > DECISION_MAX_TEMP {
 		var temp_highlow string
 		result = false
-		if (elem.Temperature < DECISION_MIN_TEMP) {
+		if elem.Temperature < DECISION_MIN_TEMP {
 			temp_highlow = "low"
 		} else {
 			temp_highlow = "high"
 		}
 		temp := strconv.FormatFloat(elem.Temperature, 'f', -1, 64)
-		reason += "Temperature too "+ temp_highlow +": " + temp + "°C."
+		reason += "Temperature too " + temp_highlow + ": " + temp + "°C."
 	} else {
 		reason += "Temperature is fine."
 	}
 
 	if elem.PrecipProbability > DECISION_MAX_PRECIP {
 		result = false
-		precip := strconv.FormatFloat(elem.PrecipProbability * 100.0, 'f', -1, 64)
+		precip := strconv.FormatFloat(elem.PrecipProbability*100.0, 'f', -1, 64)
 		reason += " High chance of rain: " + precip + "%."
 	} else {
 		reason += " Very low chance of rain."
 	}
 
-	if (elem.WindSpeed > DECISION_MAX_WINDSPEED) {
+	if elem.WindSpeed > DECISION_MAX_WINDSPEED {
 		result = false
-		windy := strconv.FormatFloat(elem.WindSpeed * 3.6, 'f', -1, 64)
+		windy := strconv.FormatFloat(elem.WindSpeed*3.6, 'f', -1, 64)
 		reason += " Too windy: " + windy + "km/h."
 	} else {
 		reason += " Not too windy."
@@ -150,7 +150,7 @@ func shouldi(rw http.ResponseWriter, req *http.Request) {
 
 	f, err := checkForecast(c, Location{lat, lng})
 	if err != nil {
-		err_string := "Could not acquire forecast data (" + err.Error() + ")"; 
+		err_string := "Could not acquire forecast data (" + err.Error() + ")"
 		decision = &Decision{Result: false, Reason: "", Error: &err_string}
 		encoded_decision, _ = json.Marshal(decision)
 		rw.Write(encoded_decision)
