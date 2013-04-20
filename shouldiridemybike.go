@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const API_KEY = ""
@@ -27,6 +28,7 @@ type Page struct {
 type Decision struct {
 	Result bool
 	Reason string
+	Info   string
 	Error  *string
 }
 
@@ -41,6 +43,7 @@ type DataPoint struct {
 	Summary                string
 	Icon                   string
 	SunriseTime            float64
+	SunsetTime             float64
 	PrecipIntensity        float64
 	PrecipIntensityMax     float64
 	PrecipIntensityMaxTime float64
@@ -77,6 +80,7 @@ type Forecast struct {
 func decide(forecast *Forecast) *Decision {
 	result := true
 	var reason string
+	var info string
 
 	elem := forecast.Hourly.Data[0]
 	if elem.Temperature < DECISION_MIN_TEMP || elem.Temperature > DECISION_MAX_TEMP {
@@ -109,7 +113,13 @@ func decide(forecast *Forecast) *Decision {
 		reason += " Not too windy."
 	}
 
-	return &Decision{Result: result, Reason: reason, Error: nil}
+	sundown := time.Unix(int64(forecast.Daily.Data[0].SunsetTime), 0)
+	dur := sundown.Sub(time.Now().UTC())
+	if result && dur.Hours() > 0 && dur.Hours() < 2 {
+		info += " By the way, put the lights on, it'll be dark soon."
+	}
+
+	return &Decision{Result: result, Reason: reason, Info: info, Error: nil}
 }
 
 // Load forecast.io data
@@ -151,7 +161,7 @@ func shouldi(rw http.ResponseWriter, req *http.Request) {
 	f, err := checkForecast(c, Location{lat, lng})
 	if err != nil {
 		err_string := "Could not acquire forecast data (" + err.Error() + ")"
-		decision = &Decision{Result: false, Reason: "", Error: &err_string}
+		decision = &Decision{Result: false, Reason: "", Info: "", Error: &err_string}
 		encoded_decision, _ = json.Marshal(decision)
 		rw.Write(encoded_decision)
 		return

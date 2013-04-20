@@ -16,7 +16,7 @@ function handleError(error) {
     $("#reason").show();
   }
   excuse = "Sorry, I don't know :(<br />Just look out of the window.";
-  $("#pos").html(excuse);
+  $("#result").html(excuse);
 }
 
 function loadLocation() {
@@ -39,7 +39,8 @@ function loadLocation() {
         longitude: position.coords.longitude}, 
         function(data, textStatus, xhr) {
           var response;
-          
+          var info;
+
           if ("success" != textStatus) {
             handleError();
             return;
@@ -61,9 +62,14 @@ function loadLocation() {
 
           reason = response["Reason"];
           if (response["Result"]) {
-            $("#pos").html("Yes.");
+            $("#result").html("Yes.");
           } else {
-            $("#pos").html("No.");
+            $("#result").html("No.");
+          }
+          
+          info = response["Info"];
+          if (typeof info !== 'undefined') {
+            $("#info").html(response["Info"]);
           }
           $("#reason").show();
     });
@@ -84,7 +90,7 @@ function loadLocation() {
           reason = "You need to use a modern browser and allow shouldiridemybike to use your location.";
           break;
       }
-    $("#pos").html("Sorry, I don't know where you are.");
+    $("#result").html("Sorry, I don't know where you are.");
     $("#reason").show();
   });
 }
