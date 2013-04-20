@@ -5,8 +5,14 @@ $(function() {
 	loadLocation();
 });
 
-function handleError() {
-	var excuse = "Sorry, I don't know :(";
+function handleError(error) {
+	var excuse;
+
+	if (typeof error !== 'undefined' && error !== null) {
+		reason = error.toString();
+		$("#reason").show();
+	}
+	excuse = "Sorry, I don't know :(<br />Just look out of the window.";
 	$("#pos").html(excuse);
 }
 
@@ -32,6 +38,10 @@ function loadLocation() {
 		  			handleError();
 		  			return;
 		  		}
+		  		if (response["Error"] !== null) {
+		  			handleError(response["Error"]);
+		  			return;
+		  		}
 
 		  		reason = response["Reason"];
 		  		if (response["Result"]) {
@@ -42,8 +52,24 @@ function loadLocation() {
 		  		$("#reason").show();
 		});
 		
-	}, function(){
+	}, function(error){
+		switch(error.code) 
+    	{	
+		    case error.PERMISSION_DENIED:
+		      reason = "You need to allow shouldiridemybike to use your location.";
+		      break;
+		    case error.POSITION_UNAVAILABLE:
+		      reason = "Your location information is unavailable";
+		      break;
+		    case error.TIMEOUT:
+		      reason = "You need to use a modern browser and allow shouldiridemybike to use your location.";
+		      break;
+		    case error.UNKNOWN_ERROR:
+		      reason = "You need to use a modern browser and allow shouldiridemybike to use your location.";
+		      break;
+	    }
 		$("#pos").html("Sorry, I don't know where you are.");
+		$("#reason").show();
 	});
 }
 
