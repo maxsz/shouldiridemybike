@@ -15,6 +15,11 @@ import (
 const API_KEY = ""
 const API_URL = "https://api.forecast.io/forecast/" + API_KEY
 
+const DECISION_MIN_TEMP = 5
+const DECISION_MAX_TEMP = 30
+const DECISION_MAX_PRECIP = 0.20
+const DECISION_MAX_WINDSPEED = 15.5
+
 type Page struct {
 	Title     string
 }
@@ -74,10 +79,10 @@ func decide(forecast *Forecast) (*Decision) {
 	var reason string
 
 	elem := forecast.Hourly.Data[0]
-	if elem.Temperature < 5 || elem.Temperature > 30 {
+	if elem.Temperature < DECISION_MIN_TEMP || elem.Temperature > DECISION_MAX_TEMP {
 		var temp_highlow string
 		result = false
-		if (elem.Temperature < 5) {
+		if (elem.Temperature < DECISION_MIN_TEMP) {
 			temp_highlow = "low"
 		} else {
 			temp_highlow = "high"
@@ -88,7 +93,7 @@ func decide(forecast *Forecast) (*Decision) {
 		reason += "Temperature is fine."
 	}
 
-	if elem.PrecipProbability > 0.20 {
+	if elem.PrecipProbability > DECISION_MAX_PRECIP {
 		result = false
 		precip := strconv.FormatFloat(elem.PrecipProbability * 100.0, 'f', -1, 64)
 		reason += " High chance of rain: " + precip + "%."
@@ -96,7 +101,7 @@ func decide(forecast *Forecast) (*Decision) {
 		reason += " Very low chance of rain."
 	}
 
-	if (elem.WindSpeed > 15.5) {
+	if (elem.WindSpeed > DECISION_MAX_WINDSPEED) {
 		result = false
 		windy := strconv.FormatFloat(elem.WindSpeed * 3.6, 'f', -1, 64)
 		reason += " Too windy: " + windy + "km/h."
