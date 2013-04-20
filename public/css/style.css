@@ -42,6 +42,10 @@ a {
 	color: #ccc;
 }
 
+#location {
+	color: #eee;	
+}
+
 #what {
 	position: absolute;
 	text-align: center;
