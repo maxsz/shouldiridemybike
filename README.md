@@ -20,3 +20,4 @@ and running:
 - Data powered by [forecast.io](http://forecast.io)
 - Uses [Google Maps API](https://developers.google.com/maps)
 - Icon based on [Bicycle](http://thenounproject.com/noun/bicycle/#icon-No54)
+- Uses [Add to Homescreen](https://github.com/cubiq/add-to-homescreen) Javascript
