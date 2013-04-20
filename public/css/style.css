@@ -1,0 +1,106 @@
+html, body {
+	-webkit-text-size-adjust: none;
+}
+
+body {
+	font-family: "Arial, Helvetica", sans-serif;
+	margin: 0px;
+	padding: 0px;
+	border: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+#page-title {
+	background-color: #eee;
+}
+
+#pos {
+	font-size: 36px;
+	font-weight: bold;
+	text-align: center;
+	position:absolute;
+	top:30%;
+	height:40px;
+	width:100%;
+	margin-top:-20px;
+}
+
+#why {
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	bottom: 25%;
+	font-weight: lighter;
+	font-size: 12px;
+	color: #ccc;
+}
+
+#why a {
+	color: #ccc;
+}
+
+#what {
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	bottom: 5%;
+	font-weight: normal;
+	font-size: 12px;
+	color: #ccc;
+}
+
+#what a {
+	color: #ccc;
+}
+
+.hr {
+	height: 1px;
+	margin: 0px auto 5px auto;
+	width: 90%;
+	background-color: #ccc;
+}
+
+.info {
+	margin: 0px 10px 0px 10px;
+}
+
+.button-body {
+	padding: 0px;
+	margin: 0px;
+}
+
+.button-tr {
+	padding: 0px;
+	margin: 0px;
+}
+
+.button-td {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	border-radius: 15px;
+	text-align: center;
+	height: 50px;
+	width: 200px;
+	border: 1px solid #ccc;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #cccccc) );
+}
+
+.button-td:active {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #cccccc), color-stop(1, #dfdfdf) );
+}
+
+.link {
+	padding: 20px;
+	color: #333;
+	display: block;
+	vertical-align: middle;
+	text-align: center;
+}
