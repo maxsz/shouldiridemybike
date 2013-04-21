@@ -18,7 +18,9 @@ const API_URL = "https://api.forecast.io/forecast/" + API_KEY
 
 const DECISION_MIN_TEMP = 5
 const DECISION_MAX_TEMP = 30
-const DECISION_MAX_PRECIP = 0.20
+const DECISION_MAX_PRECIP_INTENSITY = 0.01
+const DECISION_MAX_PRECIP_INTENSITY_THRESH = 0.1
+const DECISION_MAX_PRECIP_PROBABILITY = 0.10
 const DECISION_MAX_WINDSPEED = 15.5
 
 type Page struct {
@@ -82,32 +84,46 @@ func decide(forecast *Forecast) *Decision {
 	var reason string
 	var info string
 
-	elem := forecast.Hourly.Data[0]
-	if elem.Temperature < DECISION_MIN_TEMP || elem.Temperature > DECISION_MAX_TEMP {
+	var t time.Time
+	var diff time.Duration
+	var now DataPoint
+	for _, elem := range forecast.Hourly.Data {
+		// Get the data for the current hour
+		t = time.Unix(int64(elem.Time), 0).UTC()
+		diff = t.Sub(time.Now().UTC())
+		if diff.Minutes() > 0 {
+			now = elem
+			break
+		}
+	}
+
+	if now.Temperature < DECISION_MIN_TEMP || now.Temperature > DECISION_MAX_TEMP {
 		var temp_highlow string
 		result = false
-		if elem.Temperature < DECISION_MIN_TEMP {
+		if now.Temperature < DECISION_MIN_TEMP {
 			temp_highlow = "low"
 		} else {
 			temp_highlow = "high"
 		}
-		temp := strconv.FormatFloat(elem.Temperature, 'f', -1, 64)
+		temp := strconv.FormatFloat(now.Temperature, 'f', -1, 64)
 		reason += "Temperature too " + temp_highlow + ": " + temp + "°C."
 	} else {
 		reason += "Temperature is fine."
 	}
 
-	if elem.PrecipProbability > DECISION_MAX_PRECIP {
+	if now.PrecipIntensity > DECISION_MAX_PRECIP_INTENSITY_THRESH ||
+		(now.PrecipIntensity > DECISION_MAX_PRECIP_INTENSITY &&
+			now.PrecipProbability > DECISION_MAX_PRECIP_PROBABILITY) {
 		result = false
-		precip := strconv.FormatFloat(elem.PrecipProbability*100.0, 'f', -1, 64)
+		precip := strconv.FormatFloat(now.PrecipProbability*100.0, 'f', -1, 64)
 		reason += " High chance of rain: " + precip + "%."
 	} else {
-		reason += " Very low chance of rain."
+		reason += " Low chance of rain."
 	}
 
-	if elem.WindSpeed > DECISION_MAX_WINDSPEED {
+	if now.WindSpeed > DECISION_MAX_WINDSPEED {
 		result = false
-		windy := strconv.FormatFloat(elem.WindSpeed*3.6, 'f', -1, 64)
+		windy := strconv.FormatFloat(now.WindSpeed*3.6, 'f', -1, 64)
 		reason += " Too windy: " + windy + "km/h."
 	} else {
 		reason += " Not too windy."
