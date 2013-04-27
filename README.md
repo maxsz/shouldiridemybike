@@ -15,6 +15,8 @@ and running:
 3. Register your app with google (see [appengine website](https://developers.google.com/appengine))
 4. Deploy: `appcfg.py update shouldiridemybike`
 
+For forecast.io API access you will need an API key. Once you have it just set `API_KEY` it in `shouldiridemybike.go`.
+
 ## Acknowledgements
 
 - Data powered by [forecast.io](http://forecast.io)
