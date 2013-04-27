@@ -100,7 +100,7 @@ function why() {
   var location;
 
   poweredby = '<br />Powered by <a href="http://forecast.io">Forecast.io</a>.<br />';
-  location = '<span id="location">' + address + '</span>.';
+  location = '<span id="location">' + address + '.</span>';
 
   $("#reason").show();
   $("#reason").html(reason + poweredby + location);
